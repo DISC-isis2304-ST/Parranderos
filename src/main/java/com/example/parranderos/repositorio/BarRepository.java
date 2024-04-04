@@ -1,6 +1,7 @@
 package com.example.parranderos.repositorio;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import com.example.parranderos.modelo.Bar;
+
+import jakarta.persistence.LockModeType;
 
 public interface BarRepository extends JpaRepository<Bar, Integer> {
 
@@ -19,10 +22,13 @@ public interface BarRepository extends JpaRepository<Bar, Integer> {
                 int getCantidadSedes();
         }
 
-        @Query(value = "SELECT * FROM bares", nativeQuery = true)
+
+        @Transactional
+        @Query("SELECT b FROM Bar b")
+        @Lock(LockModeType.PESSIMISTIC_READ)
         Collection<Bar> darBares();
 
-        @Query(value = "SELECT * FROM bares WHERE id = :id", nativeQuery = true)
+        @Query(value = "SELECT * FROM bares WHERE id = :id FOR UPDATE", nativeQuery = true)
         Bar darBar(@Param("id") long id);
 
         // Consulta avanzada

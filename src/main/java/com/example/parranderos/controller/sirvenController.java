@@ -14,6 +14,7 @@ import com.example.parranderos.modelo.SirvenPK;
 import com.example.parranderos.repositorio.BarRepository;
 import com.example.parranderos.repositorio.BebidaRepository;
 import com.example.parranderos.repositorio.SirvenRepository;
+import com.example.parranderos.servicios.SirvenServicio;
 
 @Controller
 public class SirvenController {
@@ -26,6 +27,9 @@ public class SirvenController {
 
     @Autowired
     private BebidaRepository bebidaRepository;
+
+    @Autowired
+    private SirvenServicio sirvenServicio;
 
     @GetMapping("/sirven/new")
     public String sirvenForm(Model model) {
@@ -45,6 +49,12 @@ public class SirvenController {
         sirven.setPk(pk);
         sirvenRepository.insertarSirven(sirven.getPk().getBar().getId(), sirven.getPk().getBebida().getId(),
                 sirven.getPk().getHorario());
+        return "redirect:/bares";
+    }
+
+    @GetMapping("sirven/transferir")
+    public String transferirSirven(){
+        sirvenServicio.transferir_bebida(2,1,"todos", 2);
         return "redirect:/bares";
     }
 
