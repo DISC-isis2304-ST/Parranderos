@@ -28,7 +28,7 @@ public interface BarRepository extends JpaRepository<Bar, Integer> {
         @Lock(LockModeType.PESSIMISTIC_READ)
         Collection<Bar> darBares();
 
-        @Query(value = "SELECT * FROM bares WHERE id = :id FOR UPDATE", nativeQuery = true)
+        @Query(value = "SELECT * FROM bares WHERE id = :id", nativeQuery = true)
         Bar darBar(@Param("id") long id);
 
         // Consulta avanzada
