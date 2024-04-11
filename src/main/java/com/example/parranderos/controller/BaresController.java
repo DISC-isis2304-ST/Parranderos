@@ -156,9 +156,9 @@ public class BaresController {
         if (!bares.isEmpty()) {
             try {
                 Bar primerBar = bares.iterator().next(); // Obtiene el primer bar de la colección
-                baresServicio.transferir_bar_rollback(primerBar.getId(), "Bogota");
                 System.out.println("El bar transferido es: " + primerBar.getNombre());
                 System.out.println("Su ID es: " + primerBar.getId());
+                baresServicio.transferir_bar_rollback(primerBar.getId(), "Bogota");
             } catch (Exception e) {
                 System.err.println("Error al transferir el bar: " + e.getMessage());
                 redirectAttributes.addFlashAttribute("errorMessage", "No se pudo completar la transferencia del bar a Bogotá.");
