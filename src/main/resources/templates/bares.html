@@ -10,6 +10,8 @@
 </head>
 
 <body>
+    <div class="text-center"><h2 th:text="${errorMessage}"></h2></div>
+
     <div class="text-center">
 
         <h1>Lista de Bares</h1>
@@ -85,11 +87,9 @@
         <div>
             <a th:href='@{bares/new}' class="btn btn-primary">Añadir Bar</a>
             <a th:href='@{sirven/new}' class="btn btn-primary">Añadir Bebida a Bar</a>
-            <a th:href='@{bares/transferir_bar}' class="btn btn-primary">Transferir Bar</a>
-            <a th:href='@{bares/transferir_rollback}' class="btn btn-primary">Transferir Bar Rollback</a>
+            <a th:href='@{bares/actualizar_bar}' class="btn btn-primary">Actualizar Bar Con Espera</a>
+            <a th:href='@{bares/actualizar_bar_inmediato}' class="btn btn-primary">Actualizar Bar Sin Espera</a>
             <a th:href='@{bares/bloqueo}' class="btn btn-primary">Bloquear lectura</a>
-            <a th:href='@{bares}' class="btn btn-primary">Refrescar Sin Fantasma</a>
-            <a th:href='@{bares/fantasma}' class="btn btn-primary">Refrescar Con Fantasma</a>
             <a th:href='@{/}' class="btn btn-primary">Volver Atrás</a>
         </div>
         <br/>

@@ -1,5 +1,6 @@
 package com.example.parranderos.servicios;
 
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.parranderos.modelo.Bar;
 import com.example.parranderos.repositorio.BarRepository;
 import com.example.parranderos.repositorio.SirvenRepository;
+
+import jakarta.persistence.LockModeType;
+
 import java.lang.Thread;
 import java.util.List;  
 import java.util.Collection;
@@ -23,35 +27,33 @@ public class BaresServicio {
         this.baresRepository = baresRepository;
     }
 
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, readOnly = true)
+    public Collection<Bar> darBares() throws InterruptedException {
+        Collection<Bar> bares = baresRepository.darBares(); // Consultar bar.
+        return bares;
+    }
+
     // Transacción para transferir un bar a Bogotá con un nivel de aislamiento que permite lecturas comprometidas.
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void transferir_bar(int id_bar, String destino) {
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void actualizar_bar_con_espera(int id_bar, String destino) {
         try {
             Bar barActual = baresRepository.darBar(id_bar); // Obtener el bar actual.
             Thread.sleep(10000); // Simulación de una operación de larga duración.
-            baresRepository.eliminarBar(id_bar); // Eliminar el bar actual.
             // Insertar el bar con la nueva ubicación.
-            baresRepository.insertarBar(barActual.getNombre(), destino, barActual.getPresupuesto(), barActual.getCant_sedes());
+            baresRepository.actualizarBar(id_bar, barActual.getNombre(), destino, barActual.getPresupuesto(), barActual.getCant_sedes()+3);
         } catch (Exception e) {
             System.out.println(e.getMessage()); // Manejo de excepciones.
         }
     }
-
-    // Método para transferir un bar con simulación de error para probar el rollback.
-    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public void transferir_bar_rollback(int id_bar, String destino) {
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public void actualizar_bar_sin_espera(int id_bar, String destino) {
         try {
-            Bar barActual = baresRepository.darBar(id_bar);
-            Thread.sleep(10000); // Simula una operación de larga duración
-            baresRepository.eliminarBar(id_bar);
-            if (true) { // Forzar el error
-                throw new Exception("Error forzado para probar el rollback");
-            }
-            baresRepository.insertarBar(barActual.getNombre(), destino, barActual.getPresupuesto(), barActual.getCant_sedes());
+            Bar barActual = baresRepository.darBar(id_bar); // Obtener el bar actual.
+            // Insertar el bar con la nueva ubicación.
+            baresRepository.actualizarBar(id_bar, barActual.getNombre(), destino, barActual.getPresupuesto(), barActual.getCant_sedes()+3);
         } catch (Exception e) {
-            System.out.println("Se ha producido un error: " + e.getMessage());
-            // Lanzar RuntimeException para provocar rollback.
-            throw new RuntimeException("Error al transferir el bar: " + e.getMessage(), e);
+            System.out.println(e.getMessage()); // Manejo de excepciones.
         }
     }
 
